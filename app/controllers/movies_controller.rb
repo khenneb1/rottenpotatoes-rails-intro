@@ -11,14 +11,12 @@ class MoviesController < ApplicationController
   end
 
   def index
+    
     @all_ratings = Movie.all_ratings
     @sort = params[:sort] || session[:sort]
-    
-    all_ratings_hash = {}
-    @all_ratings.each { |v| all_ratings_hash[v] = 1 }
-    
-    @ratings = params[:ratings] || session[:ratings] || all_ratings_hash
-    @movies = Movie.where(rating: @ratings.keys).order(@sort)
+    params_rating = params[:ratings] && params[:commit] == "Refresh"
+    @ratings = params_rating ? params[:ratings].keys : (session[:ratings] || @all_ratings)
+    @movies = Movie.with_ratings(@ratings, @sort)
     
     session[:sort] = @sort
     session[:ratings] = @ratings
@@ -27,7 +25,7 @@ class MoviesController < ApplicationController
       flash.keep
       redirect_to movies_path(sort: @sort, ratings: @ratings)
     end
-    
+
   end
 
   def new
@@ -56,6 +54,11 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
+  end
+  
+  helper_method :hilite
+  def hilite header_title 
+    "hilite" if @sort == header_title
   end
   
 end
