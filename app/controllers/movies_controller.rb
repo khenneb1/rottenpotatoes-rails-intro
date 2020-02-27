@@ -11,15 +11,17 @@ class MoviesController < ApplicationController
   end
 
   def index
-    
-    @all_ratings = Movie.all_ratings
+
+    @all_ratings = Movie.all_ratings    
     @sort = params[:sort] || session[:sort]
     params_rating = params[:ratings] && params[:commit] == "Refresh"
     @ratings = params_rating ? params[:ratings].keys : (session[:ratings] || @all_ratings)
     @movies = Movie.with_ratings(@ratings, @sort)
     
-    session[:sort] = @sort
-    session[:ratings] = @ratings
+    if params[:sort] != session[:sort] || params[:ratings] != session[:ratings]
+      session[:sort] = @sort
+      session[:ratings] = @ratings
+    end
     
     if (params[:sort].nil? and !(session[:sort].nil?)) or (params[:ratings].nil? and !(session[:ratings].nil?))
       flash.keep
