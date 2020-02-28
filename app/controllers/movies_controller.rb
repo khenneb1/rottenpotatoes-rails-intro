@@ -14,8 +14,9 @@ class MoviesController < ApplicationController
 
     @all_ratings = Movie.all_ratings    
     @sort = params[:sort] || session[:sort]
-    params_ratings_bool = params[:ratings] && params[:commit] == "Refresh"
-    @ratings = params_ratings_bool ? params[:ratings].keys : (session[:ratings] || @all_ratings)
+    #params_ratings_bool = params[:ratings] && params[:commit] == "Refresh"
+    #@ratings = params_ratings_bool ? params[:ratings].keys : (session[:ratings] || @all_ratings)
+    @ratings = @all_ratings
     @movies = Movie.with_ratings(@ratings, @sort)
     
     if params[:sort] != session[:sort] || params[:ratings] != session[:ratings]
