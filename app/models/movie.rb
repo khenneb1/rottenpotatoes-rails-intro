@@ -4,7 +4,6 @@ class Movie < ActiveRecord::Base
     end
     
     def self.with_ratings(ratings, sort) 
-        return Movie.all.order(sort) if (ratings.nil? or ratings.empty?)
         Movie.where(rating: ratings).order(sort)
     end
 end
